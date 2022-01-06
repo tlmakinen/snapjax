@@ -161,11 +161,10 @@ plt.xlabel(r'$z$')
 plt.ylabel(r'$\mu(z; \mathcal{C})$')
 plt.legend()
 plt.show()
-```
-```
-time to compute 500 SNIa distance integrals:
-CPU times: user 1.63 ms, sys: 4 µs, total: 1.63 ms
-Wall time: 4.48 ms
+
+# time to compute 500 SNIa distance integrals:
+# CPU times: user 1.63 ms, sys: 4 µs, total: 1.63 ms
+# Wall time: 4.48 ms
 ```
 ![image](https://user-images.githubusercontent.com/29409312/148465451-31e9f8d1-d367-4b49-a35f-c6781ce0bf86.png)
 
