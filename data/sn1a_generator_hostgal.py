@@ -425,7 +425,7 @@ plt.tight_layout()
 plt.savefig('simulatedsne.png')
 #plt.show()
 
-headers = "z mb dmb x1 dx1 c dc l b true_mb true_x1 true_c"
+headers = "z mb dmb x1 dx1 c dc l b true_mb true_x1 true_c true_mg mg"
 simulated_data = (np.array([sim_z,sim_mb,sim_dmb,sim_x1,sim_dx1,sim_c,sim_dc,sim_l,sim_b,sim_true_mb,sim_true_x1,sim_true_c,sim_true_mg,sim_mg]).transpose())
 simulated_covariance = generate_covariance_matrix(simulated_data)
 np.savetxt(sys.argv[3],simulated_data, delimiter=' ',header = headers,comments="")
