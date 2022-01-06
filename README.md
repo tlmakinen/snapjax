@@ -77,12 +77,12 @@ import jax
 from jax import lax
 import jax_cosmo as jc
 import scipy.constants as cnst
-
-'''
+```
 
 We start by defining the integrand, making use of the `jax-cosmo.scipy` library
 
-'''python
+```python
+
 inference_type = 'w'
 
 # the integrand in the calculation of mu from z,cosmology
