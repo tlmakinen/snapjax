@@ -22,8 +22,6 @@ Run the whole (toy) analysis in Google Colab !
 
 ```python
 def bahamas(z, data, Cov, snID, ndat):
-  
-    zH = z.copy()
 
     # globals
     OmM = numpyro.sample('OmM', dist.Uniform(low=0.0, high=1.0))
