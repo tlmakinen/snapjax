@@ -77,7 +77,11 @@ import jax
 from jax import lax
 import jax_cosmo as jc
 import scipy.constants as cnst
+'''
 
+We start by defining the integrand, making use of the `jax-cosmo.scipy` library
+
+'''python
 inference_type = 'w'
 
 # the integrand in the calculation of mu from z,cosmology
@@ -94,8 +98,10 @@ def hubble(z,omegam, omegade,w):
     myfun = lambda z: jc.scipy.integrate.romb(integrand,0., z, args=(omegam,omegade,w)) #[0]
     I = jax.vmap(myfun)(z)
     return I
+```
+Now we define our conditional functions to define our `sinn` function, which depends on the curvature parameter, `omegakmag`. We have to define these functions in this way to allow autodifferentiation through `Jax`'s LAX backend:
 
-
+```python
 @jit
 def Dlz(omegam, omegade, h, z, w, z_helio):
 
