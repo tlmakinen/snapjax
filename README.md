@@ -9,10 +9,10 @@ If we code the cosmological calculations *differentiably*, we can perform HMC sa
 # run in-browser
 Run the whole (toy) analysis in Google Colab !
 
-// # requirements
+<!-- # requirements -->
 
 
-// # setup
+<!--  # setup -->
 
 
 # a quick example
