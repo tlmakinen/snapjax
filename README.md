@@ -153,7 +153,7 @@ Calculating these integrals is really quick:
 
 ```python
 zs = np.linspace(0, 1.2, num=500)
-print('time to compute 500 SNIa distance integrals:')
+
 %time mymus = muz(0.3, 0.7, zs)
 plt.plot(zs, mymus, label='fiducial cosmology')
 
@@ -162,7 +162,6 @@ plt.ylabel(r'$\mu(z; \mathcal{C})$')
 plt.legend()
 plt.show()
 
-# time to compute 500 SNIa distance integrals:
 # CPU times: user 1.63 ms, sys: 4 µs, total: 1.63 ms
 # Wall time: 4.48 ms
 ```
