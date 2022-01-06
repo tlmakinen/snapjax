@@ -201,11 +201,11 @@ dc_std = np.std(dc)
 mb_mean = np.mean(mb)
 mb_std = np.std(mb)
 
-x1_mean = np.mean(x1)
-x1_std = np.std(x1)
+x1_mean = true_x1 #np.mean(x1)
+x1_std = Rx #np.std(x1)
 
-c_mean = np.mean(c)
-c_std = np.std(c)
+c_mean = true_c #np.mean(c)
+c_std = Rc #np.std(c)
 
 #print(Zcmb_mean, Zcmb_std, dmb_mean, dmb_std, dx1_mean, dx1_std, dc_mean, dc_std)
 
@@ -218,7 +218,7 @@ def generate_sn1a():
     q = ss.powerlaw.rvs(2.5, loc=0, scale=2.3) # q = z+1 from Dilday et al
     while q-1 < 0:
         q = ss.powerlaw.rvs(2.5, loc=0, scale=2.3)
-        
+
     z = q-1
     l = 0
     b = 0
@@ -399,6 +399,7 @@ plt.ylabel('$b$')
 plt.scatter(sim_l,sim_b,marker = 'x',s=5)
 plt.scatter(l,b,marker = 'x',s=5)
 
+plt.tight_layout()
 plt.savefig('simulatedsne.png')
 #plt.show()
 
