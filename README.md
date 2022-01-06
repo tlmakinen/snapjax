@@ -148,3 +148,24 @@ def muz(omegam, w, z):
     h = 0.72
     return (5.0 * np.log10(Dlz(omegam, omegade, h, z, w, z_helio))+25.)
 ```
+
+Calculating these integrals is really quick:
+
+```python
+zs = np.linspace(0, 1.2, num=500)
+print('time to compute 500 SNIa distance integrals:')
+%time mymus = muz(0.3, 0.7, zs)
+plt.plot(zs, mymus, label='fiducial cosmology')
+
+plt.xlabel(r'$z$')
+plt.ylabel(r'$\mu(z; \mathcal{C})$')
+plt.legend()
+plt.show()
+```
+```
+time to compute 500 SNIa distance integrals:
+CPU times: user 1.63 ms, sys: 4 µs, total: 1.63 ms
+Wall time: 4.48 ms
+```
+![image](https://user-images.githubusercontent.com/29409312/148465451-31e9f8d1-d367-4b49-a35f-c6781ce0bf86.png)
+
