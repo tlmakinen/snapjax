@@ -8,6 +8,7 @@ If we code the cosmological calculations *differentiably*, we can perform HMC sa
 
 # run in-browser
  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1UoxzW9FWUZlQ6mfxX27CELKAH5t5irZB?usp=sharing)
+
 Run the whole (toy) analysis in Google Colab !
 
 <!-- # requirements -->
