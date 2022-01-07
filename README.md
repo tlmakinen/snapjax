@@ -99,7 +99,7 @@ def integrand(zba, omegam, omegade, w):
 @jit
 def hubble(z,omegam, omegade,w):
     # method for calculating the integral
-    myfun = lambda z: jc.scipy.integrate.romb(integrand,0., z, args=(omegam,omegade,w)) #[0]
+    myfun = lambda z: jc.scipy.integrate.romb(integrand,0., z, args=(omegam,omegade,w))
     I = jax.vmap(myfun)(z)
     return I
     
@@ -145,7 +145,7 @@ def Dlz(omegam, omegade, h, z, w, z_helio):
 # muz: distance modulus as function of params, redshift
 @jit
 def muz(omegam, w, z):
-    z_helio = z # should this be different ?
+    z_helio = z # assume the same for now
     omegade = 1. - omegam
     #w = -1.0 # freeze w
     h = 0.72
