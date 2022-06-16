@@ -170,3 +170,13 @@ plt.show()
 ```
 ![image](https://user-images.githubusercontent.com/29409312/148465451-31e9f8d1-d367-4b49-a35f-c6781ce0bf86.png)
 
+If you find this code useful in any capacity, please use the citation below:
+```
+@software{pbox_jax2021,
+  author = {T. Lucas Makinen},
+  title = {{snapjax}: a fast, flexible SuperNova Analysis Pipeline for Cosmology in Jax},
+  url = {http://github.com/tlmakinen/snapjax},
+  version = {0.0.1.dev},
+  year = {2021},
+}
+```
