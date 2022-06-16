@@ -172,7 +172,7 @@ plt.show()
 
 If you find this code useful in any capacity, please use the citation below:
 ```
-@software{snapjax_2021,
+@software{snapjax_2022,
   author = {T. Lucas Makinen},
   title = {{snapjax}: a fast, flexible SuperNova Analysis Pipeline for Cosmology in Jax},
   url = {http://github.com/tlmakinen/snapjax},
