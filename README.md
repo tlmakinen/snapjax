@@ -64,7 +64,7 @@ def bahamas(z, data, Cov, snID, ndat):
     _obsloc = np.stack((c_,x1_,mB_), axis=1)
 
     # now sample observed values with measured covariance
-    with numpyro.plate("plate_i", n_sne): #as idx:
+    with numpyro.plate("plate_i", n_sne):
         numpyro.sample('obs', dist.MultivariateNormal(_obsloc, Cov), obs=data)
 ```
 
@@ -176,7 +176,7 @@ If you find this code useful in any capacity, please use the citation below:
   author = {T. Lucas Makinen},
   title = {{snapjax}: a fast, flexible SuperNova Analysis Pipeline for Cosmology in Jax},
   url = {http://github.com/tlmakinen/snapjax},
-  version = {0.0.1.dev},
+  version = {0.1.0.dev},
   year = {2021},
 }
 ```
