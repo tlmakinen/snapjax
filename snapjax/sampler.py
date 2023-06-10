@@ -14,7 +14,7 @@ from numpyro.infer import MCMC, NUTS, HMC
 
 import matplotlib.pyplot as plt
 
-from cosmology import *
+from snapjax.cosmology import *
 
 @jit
 def log_uniform(r, log_min_val, log_max_val):
