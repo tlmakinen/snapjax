@@ -11,7 +11,15 @@ import scipy.stats as ss
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 
-from bahamas import selection_effects as selection
+# selection effects function
+eps,gmB,gc,gx1 = (29.96879778, -1.34334963,  0.45895811,  0.06703621)
+selection_param=(gc, gx1, gmB, eps)
+
+def log_indiv_selection_fn(phi_i, selection_param=np.array([gc, gx1, gmB, eps])):
+    coefs = np.array(selection_param)
+    position = np.concatenate([phi_i, np.ones(1)]) #np.array([*phi_i, 1])
+    argument = np.dot(coefs, position)
+    return ss.norm.logcdf(np.sqrt(np.pi/8)*argument) # must be a logcdf so it dies/grows to 0/1 at the right speed 
 
 
 
@@ -287,7 +295,7 @@ def generate_sn1a():
             print(e)
     while(z<0):
         #resample - negative redshift sampled
-        q = ss.powerlaw.rvs(2.5, loc=0, scale=2.3, size=1) # x = z+1 from Dilday et al
+        q = ss.powerlaw.rvs(1.5, loc=1.0, scale=3.0, size=(1000,)) # x = z+1 from Dilday et al
         z = q-1
         #z = np.random.normal(loc=Zcmb_mean, scale = Zcmb_std)
     #Step 2, compute mu_i using fiducial values
@@ -330,7 +338,7 @@ def generate_sn1a():
 
     #Step 7: Apply DES-like Selection cuts on OBSERVED values
     phi_i = np.array([observed_c1, observed_dx1, observed_mb])
-    selection_prob_i = np.exp(selection.log_indiv_selection_fn(phi_i))
+    selection_prob_i = np.exp(log_indiv_selection_fn(phi_i))
     selection_tag = 0
 
     # draw random number to simulate whack chance of SN1a being missed
