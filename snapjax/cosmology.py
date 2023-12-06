@@ -13,6 +13,7 @@ from functools import partial
 
 
 omega_baryon = jc.Planck15().Omega_b
+inference_type = "omegade"
 
 
 def set_cosmology(omegam, omegade=0.7, w=-1.0):
@@ -24,14 +25,14 @@ def set_cosmology(omegam, omegade=0.7, w=-1.0):
         w = -1.0
 
     else:
-        omegakmag = 0.0
+        omegak = 0.0
         w = w
 
     cosmo = jc.Planck15(Omega_c=omegam - omega_baryon,
                         Omega_k=omegak,
-                        w0=-1.0
+                        w0=w,
+                        h=0.72 # this stays fixed !
                         )
-
     return cosmo
 
 
