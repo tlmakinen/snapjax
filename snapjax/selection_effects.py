@@ -21,6 +21,21 @@ def log_indiv_selection_fn(phi_i, selection_param=np.array([gc, gx1, gmB, eps]))
     argument = np.dot(coefs, position)
     return jax.scipy.stats.norm.logcdf(np.sqrt(np.pi/8)*argument) # must be a logcdf so it dies/grows to 0/1 at the right speed
 
+'''
+log_latent_marginalized_indiv_selection_fn 
+= log(P(I_i | z_i, params))
+
+Assuming P(I_i | z_i, Phi_i, params) is a normal CDF
+    numerator = (gc + gm * beta) c_i + (gx - gm * alpha) x_i + gm (mu(z_i) - M0) + epsilon
+    denominator = sqrt(8/pi)
+    P(I_i | z_i, Phi_i, params) = cdf_n(numerator / denominator)
+    
+We can integrate out Phi_i analytically to get P(I_i | z_i, params):
+    numerator = (gc + gm * beta) c_star + (gx - gm * alpha) x_star + gm (mu(z_i) - M0) + epsilon
+    denominator = sqrt(8/pi + (gc + gm * beta)**2 Rc**2 + (gx - gm * alpha)**2 Rx**2 + (gm * sigma_res)**2)
+    P(I_i | z_i, params) = cdf_n(numerator / denominator)
+'''
+
 #@jax.jit
 def log_latent_marginalized_indiv_selection_fn(mu_i, param,
                                                selection_param=(gc, gx1, gmB, eps)):
@@ -42,6 +57,14 @@ def log_latent_marginalized_indiv_selection_fn(mu_i, param,
 
     return jax.scipy.stats.norm.logcdf(argument)
 
+'''
+log_redshift_marginalized_indiv_selection_fn
+P(I_i | params)
+= int dz_i P(I_i | z_i, params) P(z_i)
+
+where P(I_i | z_i, params) is np.exp(log_latent_marginalized_indiv_selection_fn)
+and P(z_i) is the expected supernovae distribution over redshift
+'''
 @jax.jit
 def supernova_redshift_pdf(z, b=1.5, z_min=0.0, z_max=3.0):
   # if rate is \propto (1 + z)^b => pdf(z, b) = b * (1 + z)^(b-1)
@@ -77,11 +100,24 @@ def log_redshift_marginalized_indiv_selection_fn(param, cosmo, selection_param):
     curve_to_integrate = jax.vmap(myfunc)(z_array)
 
     return np.log(jax.scipy.integrate.trapezoid(y=curve_to_integrate, x=z_array)) #z_array[:, np.newaxis], 4, axis=-1))
-    #return (jc.scipy.integrate.romb(redshift_marginalization_integrand, 0, 3.0, args=(param, cosmo_param, selection_param)))
 
-def rubin_log_correction(param, selection_param, phi, mu):
-    log_numerator = [log_indiv_selection_fn(phi_i, selection_param) for phi_i in phi]
-    log_denominator= [log_latent_marginalized_indiv_selection_fn(mu_i, param, selection_param) for mu_i in mu]
+
+'''
+Rubin's model:
+L_rubin \propto P(D | params) P(I | D) / P(I | z, params)
+    P(D | params) = L_vanilla
+    P(I | D) = \prod P(I_i | D_i, params)
+    P(I | z, params) = \prod P(I_i | z_i, params)
+    where P(I_i | z_i, params) is log_latent_marginalized_indiv_selection_fn
+'''
+@jax.jit
+def rubin_log_correction(param, cosmo, selection_param, phi):
+    indv_fn = lambda phi: log_indiv_selection_fn(phi, selection_param=selection_param)
+    log_numerator = jax.vmap(indv_fn)(phi)
+    mu = (muz(cosmo, z, single=True))
+    myfunc = lambda m: log_latent_marginalized_indiv_selection_fn(m, param=param, selection_param=selection_param)
+    log_denominator = jax.vmap(myfunc)(mu)
+    
     return np.sum(log_numerator) - np.sum(log_denominator)
 
 @jax.jit
@@ -90,3 +126,7 @@ def vincent_log_correction(param, cosmo, selection_param, phi, ndat):
     log_numerator = jax.vmap(indv_fn)(phi) #[log_indiv_selection_fn(phi_i, selection_param) for phi_i in phi]
 
     return (np.sum(log_numerator) - ndat * log_redshift_marginalized_indiv_selection_fn(param, cosmo, selection_param))
+
+
+# handlers for checking log-factors
+
