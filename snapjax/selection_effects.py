@@ -6,9 +6,10 @@ import jax
 from jax import lax
 import jax_cosmo as jc
 import scipy.constants as cnst
+import snapjax.cosmology as sc
 
 
-#eps,gmB,gc,gx1 = (29.96879778, -1.34334963,  0.45895811,  0.06703621)
+eps,gmB,gc,gx1 = (29.96879778, -1.34334963,  0.45895811,  0.06703621)
 
 #selection_param=(gc, gx1, gmB, eps)
 
@@ -89,7 +90,7 @@ def redshift_marginalization_integrand(z, param,
 
     
     # do trapz integration
-    mu = (muz(cosmo, z, single=True)) # TODO: Should the z's be the same?
+    mu = (sc.muz(cosmo, z, single=True)) # TODO: Should the z's be the same?
     myfunc = lambda m: log_latent_marginalized_indiv_selection_fn(m, param=param, selection_param=selection_param)
     result = myfunc(mu)
     return np.exp(result) * (supernova_redshift_pdf(z))
@@ -111,10 +112,10 @@ L_rubin \propto P(D | params) P(I | D) / P(I | z, params)
     where P(I_i | z_i, params) is log_latent_marginalized_indiv_selection_fn
 '''
 @jax.jit
-def rubin_log_correction(param, cosmo, selection_param, phi):
+def rubin_log_correction(param, cosmo, selection_param, phi, z):
     indv_fn = lambda phi: log_indiv_selection_fn(phi, selection_param=selection_param)
     log_numerator = jax.vmap(indv_fn)(phi)
-    mu = (muz(cosmo, z, single=True))
+    mu = (sc.muz(cosmo, z, single=True))
     myfunc = lambda m: log_latent_marginalized_indiv_selection_fn(m, param=param, selection_param=selection_param)
     log_denominator = jax.vmap(myfunc)(mu)
     
