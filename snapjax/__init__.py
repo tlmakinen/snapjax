@@ -2,7 +2,7 @@ __version__ = "0.1.0"
 
 from functools import partial
 from .cosmology import *
-from .sampler import *
+#from .sampler import *
 from .cosmology_container import SNiaCosmology
 import snapjax.selection_effects as selection
 
