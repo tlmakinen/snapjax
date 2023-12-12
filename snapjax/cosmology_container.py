@@ -8,7 +8,9 @@ from functools import partial
 class SNiaCosmology:
     def __init__(self, Omega_m, Omega_de, h, n_s, sigma8, w0, wa, gamma=None):
         """
-        Cosmology object, stores primary and derived cosmological parameters.
+        Cosmology object, stores primary and derived cosmological parameters. Adapted from 
+        Jax-Cosmo source code: 
+        https://github.com/DifferentiableUniverseInitiative/jax_cosmo/
 
         Parameters:
         -----------
@@ -192,13 +194,3 @@ class SNiaCosmology:
     @property
     def gamma(self):
         return self._gamma
-
-SNIa_cosmo = partial(SNiaCosmology, 
-                        Omega_m=0.3,
-                        Omega_de=0.7,
-                        h=0.72,
-                        n_s=0.9667,
-                        sigma8=0.8159,
-                        w0=-1.0,
-                        wa=0.0,
-                    )
