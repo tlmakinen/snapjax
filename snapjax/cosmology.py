@@ -1,7 +1,6 @@
 import jax.numpy as np
 from jax import grad, jit, vmap
 from jax import random
-import torch
 import jax
 from jax import lax
 import jax_cosmo as jc
