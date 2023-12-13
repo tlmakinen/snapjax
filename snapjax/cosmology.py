@@ -10,15 +10,24 @@ import matplotlib.pyplot as plt
 # the integrand in the calculation of mu from z,cosmology
 from functools import partial
 
+from snapjax import SNIa_fiducial
 
-omega_baryon = jc.Planck15().Omega_b
+
 inference_type = "omegade"
 
 
 def set_cosmology(omegam, omegade=0.7, w=-1.0):
+    """_summary_
 
-    omega_baryon = 0.0486
-    
+    Args:
+        omegam (float): Matter density fraction
+        omegade (float, optional): Dark energy density fraction. Defaults to 0.7.
+        w (float, optional): Dark energy equation of state. Defaults to -1.0.
+
+    Returns:
+        snapjax.SNiaCosmology s: cosmology container object (pytree)
+    """
+
     if inference_type == "omegade":
         omegak =  1-omegam-omegade
         w = -1.0
@@ -27,12 +36,14 @@ def set_cosmology(omegam, omegade=0.7, w=-1.0):
         omegak = 0.0
         w = w
 
-    cosmo = jc.Planck15(Omega_c=omegam - omega_baryon,
-                        Omega_k=omegak,
-                        w0=w,
-                        h=0.72 # this stays fixed !
-                        )
+    cosmo = SNIa_fiducial(Omega_m=omegam,
+                       Omega_de=omegade,
+                       w0=w,
+                       h=0.72 # this stays fixed !
+                       )
     return cosmo
+    
+
 
 
 def integrate_spline_approx(f,right_endpts,npts=100):
@@ -55,6 +66,18 @@ def integrate_spline_approx(f,right_endpts,npts=100):
 
 @jit
 def integrand(zba, omegam, omegade, w):
+    """Calculate the  Friedmann equation at a given redshift
+      (to be integrated over)
+
+    Args:
+        zba (float): redshift
+        omegam (float): matter density fraction
+        omegade (float): dark energy density fraction
+        w (float): dark energy equation of state
+
+    Returns:
+        float: Friedmann equation at specified redshift
+    """
     return 1.0/np.sqrt(
         omegam*(1+zba)**3 + omegade*(1+zba)**(3.+3.*w) + (1.-omegam-omegade)*(1.+zba)**2
     )
@@ -62,6 +85,19 @@ def integrand(zba, omegam, omegade, w):
 # integration of the integrand given above, vmapped over z-axis
 @jit
 def hubble(z,omegam, omegade,w):
+    """Calculate Hubble integral over redshift
+
+
+    Args:
+        z (float): endpoint redhsift to integrate to
+        omegam (float): matter density fraction
+        omegade (float): dark energy density fraction
+        w (float): dark energy equation of state
+
+    Returns:
+        float: integral from z=0 to specified redshift
+    """
+
     # method for calculating the integral
     #myfun = lambda z: jc.scipy.integrate.romb(integrand,0., z, args=(omegam,omegade,w)) #[0]
     intg = lambda z: integrand(z, omegam=omegam, omegade=omegade, w=w)
@@ -81,6 +117,21 @@ def hubble_single(z, omegam, omegade, w):
 
 @partial(jax.jit, static_argnums=(6))
 def Dlz(omegam, omegade, h, z, w, z_helio, single=False):
+    """Autodifferentiable Hubble distance as function of cosmology
+
+
+    Args:
+        omegam (float): matter density fraction
+        omegade (float): dark energy density fraction
+        h (float): hubble parameter H0/100 Mpc
+        z (float): redshift
+        w (float): dark energy equation of state
+        z_helio (float): other redshift (deprecated to be removed)
+        single (bool, optional): Whether to vmap or compute hubble integral one-by-one. Defaults to False.
+
+    Returns:
+        float: _description_
+    """
 
     # which inference are we doing ?
     if inference_type == "omegade":
@@ -122,6 +173,16 @@ def Dlz(omegam, omegade, h, z, w, z_helio, single=False):
 # muz: distance modulus as function of params, redshift
 @partial(jax.jit, static_argnums=(2))
 def muz(cosmo, z, single=False):
+    """Compute distance modulus for a catalogue of supernovae
+
+    Args:
+        cosmo (snapjax.SNIaCosmology): _description_
+        z (array_like): _description_
+        single (bool, optional): _description_. Defaults to False.
+
+    Returns:
+        (array_like): mu(z) for the catalogue of SNIa
+    """
 
     omegam = cosmo.Omega_m
     omegade = cosmo.Omega_de # should have its own attribute
